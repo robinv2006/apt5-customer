@@ -8,6 +8,8 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String customerCode;
+
     private String roomCode;
 
     private String firstName;
@@ -19,7 +21,8 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(String roomCode, String firstName, String lastName, String city, String street, Integer number) {
+    public Customer(String customerCode, String roomCode, String firstName, String lastName, String city, String street, Integer number) {
+        this.customerCode = customerCode;
         this.roomCode = roomCode;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,6 +30,15 @@ public class Customer {
         this.street = street;
         this.number = number;
     }
+
+    public String getCustomerCode() {
+        return customerCode;
+    }
+
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
+    }
+
     /*public Long getId() {
         return id;
     }

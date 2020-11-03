@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findAllByRoomCode(String code);
-    Customer findAllByFirstNameAndLastName(String firstName, String lastName);
+    Customer findCustomerByCustomerCode(String code);
+    //Customer findAllByFirstNameAndLastName(String firstName, String lastName);
 }

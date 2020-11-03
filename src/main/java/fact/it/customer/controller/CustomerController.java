@@ -17,8 +17,8 @@ public class CustomerController {
     @PostConstruct
     private void fillDatabase() {
         if (customerRepository.count() == 0){
-            customerRepository.save(new Customer("H01C01", "Jeff", "Jeffen", "Antwerpen", "Straat1", 1));
-            customerRepository.save(new Customer("H02C02", "Jos", "Jossen", "Gent", "Straat2", 10));
+            customerRepository.save(new Customer("C01","H01C01", "Jeff", "Jeffen", "Antwerpen", "Straat1", 1));
+            customerRepository.save(new Customer("C02","H02C02", "Jos", "Jossen", "Gent", "Straat2", 10));
         }
 
         System.out.println("Number of customers: " + customerRepository.count());
@@ -29,9 +29,14 @@ public class CustomerController {
         return customerRepository.findAll();
     }
 
-    @GetMapping("/customers/{code}")
-    public List<Customer> getCustomer(@PathVariable String code){
+    /*@GetMapping("/customers/{code}")
+    public List<Customer> getCustomerByRoom(@PathVariable String code){
         return customerRepository.findAllByRoomCode(code);
+    }*/
+
+    @GetMapping("/customers/{customerCode}")
+    public Customer getCustomerByName(@PathVariable String customerCode){
+        return customerRepository.findCustomerByCustomerCode(customerCode);
     }
 
     @PostMapping("/customers/new")
@@ -40,9 +45,9 @@ public class CustomerController {
         return newCustomer;
     }
 
-    @PutMapping("/customers/{firstName}/{lastName}")
-    public Customer replaceCustomer(@RequestBody Customer updateCustomer, @PathVariable String firstName, @PathVariable String lastName){
-        Customer customer = customerRepository.findAllByFirstNameAndLastName(firstName, lastName);
+    @PutMapping("/customers/{customerCode}")
+    public Customer replaceCustomer(@RequestBody Customer updateCustomer, @PathVariable String customerCode){
+        Customer customer = customerRepository.findCustomerByCustomerCode(customerCode);
 
         customer.setFirstName(updateCustomer.getFirstName());
         customer.setLastName(updateCustomer.getLastName());
@@ -51,12 +56,14 @@ public class CustomerController {
         customer.setStreet(updateCustomer.getStreet());
         customer.setNumber(updateCustomer.getNumber());
 
+        customerRepository.save(customer);
+
         return customer;
     }
 
-    @DeleteMapping("/customers/{firstName}/{lastName}")
-    public void deleteCustomer(@PathVariable String firstName, @PathVariable String lastName){
-        Customer customer = customerRepository.findAllByFirstNameAndLastName(firstName, lastName);
+    @DeleteMapping("/customers/{customerCode}")
+    public void deleteCustomer(@PathVariable String customerCode){
+        Customer customer = customerRepository.findCustomerByCustomerCode(customerCode);
         customerRepository.delete(customer);
     }
 
