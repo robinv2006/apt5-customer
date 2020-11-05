@@ -1,4 +1,4 @@
-name: Backend Chat CI/CD
+name: Backend customer
 
 on:
   push:
