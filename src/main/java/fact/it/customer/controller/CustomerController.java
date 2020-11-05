@@ -17,8 +17,8 @@ public class CustomerController {
     @PostConstruct
     private void fillDatabase() {
         if (customerRepository.count() == 0){
-            customerRepository.save(new Customer("C01","H01C01", "Jeff", "Jeffen", "Antwerpen", "Straat1", 1));
-            customerRepository.save(new Customer("C02","H02C02", "Jos", "Jossen", "Gent", "Straat2", 10));
+            customerRepository.save(new Customer("C01","R01", "Jeff", "Jeffen", "Antwerpen", "Straat1", 1));
+            customerRepository.save(new Customer("C02","R02", "Jos", "Jossen", "Gent", "Straat2", 10));
         }
 
         System.out.println("Number of customers: " + customerRepository.count());
