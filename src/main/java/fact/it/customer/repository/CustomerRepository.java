@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    List<Customer> findAllByRoomCode(String code);
+    List<Customer> findCustomerByRoomCode(String code);
     Customer findCustomerByCustomerCode(String code);
     //Customer findAllByFirstNameAndLastName(String firstName, String lastName);
 }

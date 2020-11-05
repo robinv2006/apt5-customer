@@ -16,7 +16,8 @@ public class CustomerController {
 
     @PostConstruct
     private void fillDatabase() {
-        if (customerRepository.count() == 0){
+        if (customerRepository.count() == 0) {
+
             customerRepository.save(new Customer("C01","R01", "Jeff", "Jeffen", "Antwerpen", "Straat1", 1));
             customerRepository.save(new Customer("C02","R02", "Jos", "Jossen", "Gent", "Straat2", 10));
         }
@@ -37,6 +38,11 @@ public class CustomerController {
     @GetMapping("/customers/{customerCode}")
     public Customer getCustomerByName(@PathVariable String customerCode){
         return customerRepository.findCustomerByCustomerCode(customerCode);
+    }
+
+    @GetMapping("/customers/rooms/{roomCode}")
+    public List<Customer> getCustomerByRoomCode(@PathVariable String roomCode){
+        return customerRepository.findCustomerByRoomCode(roomCode);
     }
 
     @PostMapping("/customers/new")
