@@ -1,4 +1,4 @@
-name: Backend customer
+name: Backend Customer
 
 on:
   push:
