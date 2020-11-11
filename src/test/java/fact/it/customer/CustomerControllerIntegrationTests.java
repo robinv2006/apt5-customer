@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CustomerControllerIntegrationTest {
+class CustomerControllerIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,6 +48,7 @@ class CustomerControllerIntegrationTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    //test
     @Test
     public void whenGetCustomers_thenReturnJsonReview() throws Exception {
         mockMvc.perform(get("/customers"))
