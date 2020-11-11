@@ -3,6 +3,7 @@ package fact.it.customer.controller;
 import fact.it.customer.model.Customer;
 import fact.it.customer.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,7 @@ public class CustomerController {
     }*/
 
     @GetMapping("/customers/{customerCode}")
-    public Customer getCustomerByName(@PathVariable String customerCode){
+    public Customer getCustomerByCustomerCode(@PathVariable String customerCode){
         return customerRepository.findCustomerByCustomerCode(customerCode);
     }
 
@@ -50,9 +51,9 @@ public class CustomerController {
         return newCustomer;
     }
 
-    @PutMapping("/customers/{customerCode}")
-    public Customer replaceCustomer(@RequestBody Customer updateCustomer, @PathVariable String customerCode){
-        Customer customer = customerRepository.findCustomerByCustomerCode(customerCode);
+    @PutMapping("/customers")
+    public Customer replaceCustomer(@RequestBody Customer updateCustomer){
+        Customer customer = customerRepository.findCustomerByCustomerCode(updateCustomer.getCustomerCode());
 
         customer.setFirstName(updateCustomer.getFirstName());
         customer.setLastName(updateCustomer.getLastName());
@@ -67,9 +68,15 @@ public class CustomerController {
     }
 
     @DeleteMapping("/customers/{customerCode}")
-    public void deleteCustomer(@PathVariable String customerCode){
+    public ResponseEntity deleteCustomer(@PathVariable String customerCode){
         Customer customer = customerRepository.findCustomerByCustomerCode(customerCode);
-        customerRepository.delete(customer);
+        if(customer != null){
+            customerRepository.delete(customer);
+            return ResponseEntity.ok().build();
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
 
