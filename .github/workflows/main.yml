@@ -39,7 +39,7 @@ jobs:
         uses: Harmon758/postgresql-action@v1.0.0
         with:
           # Version of PostgreSQL to use
-          postgresql version: latest # optional, default is latest
+          # postgresql version: latest # optional, default is latest
           # POSTGRES_DB - name for the default database that is created
           postgresql db: postgres # optional, default is 
           # POSTGRES_USER - create the specified user with superuser power
@@ -66,7 +66,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Build
-        run: docker build -t ${{ secrets.DOCKER_USER }}/customer-service:latest .
+        run: docker build -t ${{ secrets.DOCKER_USER }}/customer-service .
 
       - name: Upload container to Docker Hub with Push
-        run: docker push ${{ secrets.DOCKER_USER }}/customer-service:latest
+        run: docker push ${{ secrets.DOCKER_USER }}/customer-service
