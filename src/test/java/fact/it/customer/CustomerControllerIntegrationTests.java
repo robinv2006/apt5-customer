@@ -48,7 +48,7 @@ class CustomerControllerIntegrationTests {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    //test
+    //test2
     @Test
     public void whenGetCustomers_thenReturnJsonReview() throws Exception {
         mockMvc.perform(get("/customers"))
