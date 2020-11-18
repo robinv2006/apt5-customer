@@ -3,54 +3,45 @@ package fact.it.customer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fact.it.customer.model.Customer;
 import fact.it.customer.repository.CustomerRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CustomerControllerIntegrationTests {
-
+public class CustomerControllerUnitTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     private CustomerRepository customerRepository;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     private Customer customer1 = new Customer("C01", "R01", "Jeff", "Jeffen", "Antwerpen", "Straat1", 1);
     private Customer customer2 = new Customer("C02", "R02", "Jos", "Jossen", "Gent", "Straat2", 10);
 
-    @BeforeEach
-    public void beforeAllTests() {
-        customerRepository.deleteAll();
-        customerRepository.save(customer1);
-        customerRepository.save(customer2);
-    }
+    private List<Customer> allCustomers = Arrays.asList(customer1, customer2);
 
-    @AfterEach
-    public void afterAllTests() {
-        //Watch out with deleteAll() methods when you have other data in the test database!
-        customerRepository.deleteAll();
-    }
-
-    private ObjectMapper mapper = new ObjectMapper();
-
-    //test2
     @Test
     public void whenGetCustomers_thenReturnJsonReview() throws Exception {
+
+        given(customerRepository.findAll()).willReturn(allCustomers);
+
         mockMvc.perform(get("/customers"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -74,6 +65,8 @@ class CustomerControllerIntegrationTests {
     @Test
     public void givenCustomer_whenGetCustomerByCustomerCode_thenReturnJsonReview() throws Exception {
 
+        given(customerRepository.findCustomerByCustomerCode("C01")).willReturn(customer1);
+
         mockMvc.perform(get("/customers/{customerCode}", "C01"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -84,6 +77,26 @@ class CustomerControllerIntegrationTests {
                 .andExpect(jsonPath("$.city", is("Antwerpen")))
                 .andExpect(jsonPath("$.street", is("Straat1")))
                 .andExpect(jsonPath("$.number", is(1)));
+    }
+
+    @Test
+    public void givenCustomer_whenGetCustomerByRoomCode_thenReturnJsonReview() throws Exception {
+
+        List<Customer> allCustomersRoom = Arrays.asList(customer1);
+
+        given(customerRepository.findCustomerByRoomCode("R01")).willReturn(allCustomersRoom);
+
+        mockMvc.perform(get("/customers/rooms/{roomCode}", "R01"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].customerCode", is("C01")))
+                .andExpect(jsonPath("$[0].roomCode", is("R01")))
+                .andExpect(jsonPath("$[0].firstName", is("Jeff")))
+                .andExpect(jsonPath("$[0].lastName", is("Jeffen")))
+                .andExpect(jsonPath("$[0].city", is("Antwerpen")))
+                .andExpect(jsonPath("$[0].street", is("Straat1")))
+                .andExpect(jsonPath("$[0].number", is(1)));
     }
 
     @Test
@@ -109,6 +122,8 @@ class CustomerControllerIntegrationTests {
 
         Customer updatedCustomer = new Customer("C01", "R01", "Jeff!!!!!", "Jeffen", "Antwerpen", "Straat1", 1);
 
+        given(customerRepository.findCustomerByCustomerCode("C01")).willReturn(updatedCustomer);
+
         mockMvc.perform(put("/customers")
                 .content(mapper.writeValueAsString(updatedCustomer))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -124,14 +139,20 @@ class CustomerControllerIntegrationTests {
     }
 
     @Test
-    public void givenCustomer_whenDeleteCustomer_thenStatusOk() throws Exception {
+    public void givenReview_whenDeleteReview_thenStatusOk() throws Exception{
+        Customer customerToBeDeleted = customer2;
+
+        given(customerRepository.findCustomerByCustomerCode("C02")).willReturn(customerToBeDeleted);
+
         mockMvc.perform(delete("/customers/{customerCode}", "C02")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void givenNoCustomer_whenDeleteCustomer_thenStatusNotFound() throws Exception {
+    public void givenNoReview_whenDeleteReview_thenStatusNotFound() throws Exception{
+        given(customerRepository.findCustomerByCustomerCode("C04")).willReturn(null);
+
         mockMvc.perform(delete("/customers/{customerCode}", "C04")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
